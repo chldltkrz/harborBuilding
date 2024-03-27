@@ -218,18 +218,18 @@ jobs:
 
       - name: Load remote Docker image
         run: |
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-trivy-adapter:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-core:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-db:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-exporter:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-jobservice:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-log:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-nginx:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-portal:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-prepare:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-redis:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-registry:${{ env.tag }} 
-          docker pull https://minregi.k3.acornsoft.io/goharbor/harbor-registryctl:${{ env.tag }}
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-trivy-adapter:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-core:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-db:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-exporter:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-jobservice:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-log:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-nginx:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-portal:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-prepare:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-redis:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-registry:${{ env.tag }} 
+          docker pull minregi.k3.acornsoft.io/goharbor/harbor-registryctl:${{ env.tag }}
 
       - name: SHOW CURRENT IMAGES LIST
         run: |
