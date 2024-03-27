@@ -186,6 +186,20 @@ jobs:
       packages: write
     strategy:
       fail-fast: false
+      matrix:
+        component:
+          - trivy-adapter
+          - core
+          - db
+          - exporter
+          - jobservice
+          - log
+          - nginx
+          - portal
+          - prepare
+          - redis
+          - registry
+          - registryctl
     defaults:
       run:
         working-directory: ./
@@ -214,6 +228,14 @@ jobs:
 
       - id: versioning
         run: echo "tag=$(cat ./version)" >> $GITHUB_ENV
+
+      - name: Load remote Docker image
+        run: |
+          docker image import https://minregi.k3.acornsoft.io goharbor/harbor-${{ matrix.component }}:${{ env.tag }} load
+
+      - name: SHOW CURRENT IMAGES LIST
+        run: |
+          docker images -a
 
       - name: Docker packaging Offline installer
         env:
