@@ -175,16 +175,6 @@ jobs:
             *)           make build BUILDTARGET="_build_${{ matrix.component }}" ${CTX} ;;
           esac;
 
-  docker-package:
-    needs: docker-image
-
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-    steps:
       - name: Docker packaging Offline installer
         run: |
           # Run the 'package_offline' command in ./harbor/Makefile
