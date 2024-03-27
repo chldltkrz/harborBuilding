@@ -188,7 +188,9 @@ jobs:
       - name: Docker packaging Offline installer
         run: |
           # Run the 'package_offline' command in ./harbor/Makefile
-          make ./harbor package_offline
+          cd ./harbor
+          sed -i 's/package_offline: update_prepare_version compile build/package_offline: update_prepare_version/' Makefile
+          make package_offline
 
           # Setup SSH key
           mkdir -p ~/.ssh/
