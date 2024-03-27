@@ -81,7 +81,7 @@ jobs:
           #   org.opencontainers.image.source=https://github.com/${{ github.repository }}
           #   org.opencontainers.image.revision=${{ env.tag }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: minregi.k3.acornsoft.io/test/harbor-${{ matrix.component }}-base:${{ env.tag }}
+          tags: minregi.k3.acornsoft.io/goharbor/harbor-${{ matrix.component }}-base:${{ env.tag }}
 
   docker-image:
     needs:
@@ -146,9 +146,9 @@ jobs:
 
       - name: Build & Publish images
         env:
-          IMAGENAMESPACE: minregi.k3.acornsoft.io/test
-          BASEIMAGENAMESPACE: minregi.k3.acornsoft.io/test
-          IMAGELABELS: org.opencontainers.image.source=https://minregi.k3.acornsoft.io/test
+          IMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
+          BASEIMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
+          IMAGELABELS: org.opencontainers.image.source=https://minregi.k3.acornsoft.io/goharbor
           MULTIARCH: true
           TRIVYFLAG: true
           CHARTFLAG: true
@@ -174,3 +174,31 @@ jobs:
             registryctl) make build BUILDTARGET="_build_registry _build_registryctl" ${CTX} ;;
             *)           make build BUILDTARGET="_build_${{ matrix.component }}" ${CTX} ;;
           esac;
+
+  docker-package:
+    needs: docker-image
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Docker packaging Offline installer
+        run: |
+          # Run the 'package_offline' command in ./harbor/Makefile
+          make ./harbor package_offline
+
+          # Setup SSH key
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.ISSAC_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # Disable host key checking
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+          # Send the output file to the certain server
+          scp -i ~./ssh/id_rsa ./harbor/harbor-offline-installer* ubuntu@3.36.98.17:/home/ubuntu/
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.ISSAC_KEY }}
