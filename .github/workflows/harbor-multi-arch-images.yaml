@@ -81,7 +81,7 @@ jobs:
           #   org.opencontainers.image.source=https://github.com/${{ github.repository }}
           #   org.opencontainers.image.revision=${{ env.tag }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: minregi.k3.acornsoft.io/goharbor/harbor-${{ matrix.component }}-base:${{ env.tag }}
+          tags: minregi.k3.acornsoft.io/goharbor/harbor-${{ matrix.component }}-baseimage:${{ env.tag }}
 
   docker-image:
     needs:
