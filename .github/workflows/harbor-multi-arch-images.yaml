@@ -199,6 +199,7 @@ jobs:
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
 
           # Send the output file to the certain server
-          scp -i ~./ssh/id_rsa ./harbor/harbor-offline-installer* ubuntu@3.36.98.17:/home/ubuntu/
+          chown ubuntu:ubuntu ./harbor/harbor-offline-installer*
+          scp -i ~/.ssh/id_rsa ./harbor/harbor-offline-installer* ubuntu@3.36.98.17:/home/ubuntu/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.ISSAC_KEY }}
