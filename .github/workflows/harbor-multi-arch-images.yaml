@@ -207,36 +207,35 @@ jobs:
 
       - name: Load remote Docker image
         run: |
-          docker pull minregi.k3.acornsoft.io/test/harbor-trivy-adapter-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-core-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-db-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-exporter-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-jobservice-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-log-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-nginx-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-portal-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-prepare-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-redis-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-registry-base:${{ env.tag }}
-          docker pull minregi.k3.acornsoft.io/test/harbor-registryctl-base:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/nginx-photon:${{ env.tag }} 
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/redis-photon:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-log:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-exporter:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/trivy-adapter-photon:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-db:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/registry-photon:${{ env.tag }} 
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/prepare:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-jobservice:${{ env.tag }} 
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-registryctl:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-portal:${{ env.tag }}
+          docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-core:${{ env.tag }}
 
       - name: Changing the tag of the base image
         run: |
-          docker tag minregi.k3.acornsoft.io/test/harbor-trivy-adapter-base:${{ env.tag }} goharbor/trivy-adapter-photon:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-core-base:${{ env.tag }} goharbor/harbor-core:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-db-base:${{ env.tag }} goharbor/harbor-db:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-exporter-base:${{ env.tag }} goharbor/harbor-exporter:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-jobservice-base:${{ env.tag }} goharbor/harbor-jobservice:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-log-base:${{ env.tag }} goharbor/harbor-log:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-nginx-base:${{ env.tag }} goharbor/nginx-photon:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-portal-base:${{ env.tag }} goharbor/harbor-portal:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-prepare-base:${{ env.tag }} goharbor/prepare:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-redis-base:${{ env.tag }} goharbor/redis-photon:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-registry-base:${{ env.tag }} goharbor/registry-photon:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/test/harbor-registryctl-base:${{ env.tag }} goharbor/harbor-registryctl:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/nginx-photon:${{ env.tag }} goharbor/nginx-photon${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/redis-photon:${{ env.tag }} goharbor/redis-photon:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/harbor-log:${{ env.tag }} goharbor/harbor-log:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/harbor-exporter:${{ env.tag }} goharbor/harbor-exporter:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/trivy-adapter-photon:${{ env.tag }} goharbor/trivy-adapter-photon:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/harbor-db:${{ env.tag }} goharbor/harbor-db:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/registry-photon:${{ env.tag }} goharbor/registry-photon:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/prepare:${{ env.tag }} goharbor/prepare:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/harbor-jobservice:${{ env.tag }} goharbor/harbor-jobservice:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/harbor-registryctl:${{ env.tag }} goharbor/harbor-registryctl:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/harbor-portal:${{ env.tag }} goharbor/harbor-portal:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/harbor-core:${{ env.tag }} goharbor/harbor-core:${{ env.tag }}
 
       - name: Docker packaging Offline installer
-
         run: |
           # Run the 'package_offline' command in ./harbor/Makefile
           cd ./harbor
@@ -250,7 +249,6 @@ jobs:
         run: |
           mkdir -p ~/.ssh/
           echo "${{ secrets.ISSAC_KEY }}" > ~/.ssh/id_rsa
-          cat ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
           # Disable host key checking
