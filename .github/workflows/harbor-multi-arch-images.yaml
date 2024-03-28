@@ -246,8 +246,6 @@ jobs:
           sed -i 's/TRIVYFLAG=false/TRIVYFLAG=true/' Makefile
           sed -i '0,/VERSIONTAG=dev/s//VERSIONTAG=v2.7.4/' Makefile
 
-      - name: package_offline
-        run: |
           make package_offline
 
       - name: Setup SSH key
@@ -262,4 +260,4 @@ jobs:
 
       - name: Send the output file to the certain server
         run: |
-          scp -i ~/.ssh/id_rsa ./harbor-offline-installer-* ubuntu@3.36.98.17:/home/ubuntu/
+          scp -i ~/.ssh/id_rsa ./harbor/harbor-offline-installer-* ubuntu@3.36.98.17:/home/ubuntu/
