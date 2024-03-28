@@ -1,5 +1,4 @@
 name: Docker publish
-
 on:
   workflow_dispatch:
     inputs:
@@ -9,260 +8,263 @@ on:
   push:
     branches:
       - "master"
-
 jobs:
-  docker-base-image:
+  do-nothing:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        component:
-          - trivy-adapter
-          - core
-          - db
-          - exporter
-          - jobservice
-          - log
-          - nginx
-          - portal
-          - prepare
-          - redis
-          - registry
-          - registryctl
-
-    defaults:
-      run:
-        working-directory: ./
-
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
+      - run: echo "This job does nothing"
+#   docker-base-image:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: write
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         component:
+#           - trivy-adapter
+#           - core
+#           - db
+#           - exporter
+#           - jobservice
+#           - log
+#           - nginx
+#           - portal
+#           - prepare
+#           - redis
+#           - registry
+#           - registryctl
 
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
-        with:
-          driver: docker-container
-          driver-opts: network=host
-      - uses: docker/login-action@v2
-        with:
-          registry: minregi.k3.acornsoft.io
-          username: admin
-          password: Pass0000@
+#     defaults:
+#       run:
+#         working-directory: ./
 
-      - run: make patch
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           submodules: true
 
-      - id: prepare
-        run: echo "tag=$(cat ./version)"  >> $GITHUB_ENV
+#       - uses: docker/setup-qemu-action@v2
+#       - uses: docker/setup-buildx-action@v2
+#         with:
+#           driver: docker-container
+#           driver-opts: network=host
+#       - uses: docker/login-action@v2
+#         with:
+#           registry: minregi.k3.acornsoft.io
+#           username: admin
+#           password: Pass0000@
 
-      - name: Check if component is db
-        if: ${{ (matrix.component == 'db') }}
-        run: |
-          bash ./scripts/convert.sh ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
-          cat ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
+#       - run: make patch
 
-      - name: Build base image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./harbor
-          file: ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
-          platforms: linux/amd64,linux/arm64
-          # labels: |
-          #   org.opencontainers.image.source=https://github.com/${{ github.repository }}
-          #   org.opencontainers.image.revision=${{ env.tag }}
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: minregi.k3.acornsoft.io/goharbor/harbor-${{ matrix.component }}-base:${{ env.tag }}
+#       - id: prepare
+#         run: echo "tag=$(cat ./version)"  >> $GITHUB_ENV
 
-  docker-image:
-    needs:
-      - docker-base-image
+#       - name: Check if component is db
+#         if: ${{ (matrix.component == 'db') }}
+#         run: |
+#           bash ./scripts/convert.sh ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
+#           cat ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
 
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        component:
-          - prepare
-          - db
-          - portal
-          - core
-          - jobservice
-          - log
-          - nginx
-          - registryctl
-          - trivy_adapter
-          - redis
-          - standalone_db_migrator
-          - exporter
+#       - name: Build base image
+#         uses: docker/build-push-action@v4
+#         with:
+#           context: ./harbor
+#           file: ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
+#           platforms: linux/amd64,linux/arm64
+#           # labels: |
+#           #   org.opencontainers.image.source=https://github.com/${{ github.repository }}
+#           #   org.opencontainers.image.revision=${{ env.tag }}
+#           push: ${{ github.event_name != 'pull_request' }}
+#           tags: minregi.k3.acornsoft.io/goharbor/harbor-${{ matrix.component }}-base:${{ env.tag }}
 
-    defaults:
-      run:
-        working-directory: ./
+#   docker-image:
+#     needs:
+#       - docker-base-image
 
-    steps:
-      - id: prepare
-        run: echo "tag=$(cat ./version)"  >> $GITHUB_ENV
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: write
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         component:
+#           - prepare
+#           - db
+#           - portal
+#           - core
+#           - jobservice
+#           - log
+#           - nginx
+#           - registryctl
+#           - trivy_adapter
+#           - redis
+#           - standalone_db_migrator
+#           - exporter
 
-      - uses: actions/setup-go@v3
-        with:
-          go-version: "^1.20.x"
+#     defaults:
+#       run:
+#         working-directory: ./
 
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
-        with:
-          driver: docker-container
-          driver-opts: network=host
+#     steps:
+#       - id: prepare
+#         run: echo "tag=$(cat ./version)"  >> $GITHUB_ENV
+#       - uses: actions/checkout@v3
+#         with:
+#           submodules: true
 
-      - run: make patch
+#       - uses: actions/setup-go@v3
+#         with:
+#           go-version: "^1.20.x"
 
-      - uses: docker/login-action@v2
-        with:
-          registry: minregi.k3.acornsoft.io
-          username: admin
-          password: Pass0000@
+#       - uses: docker/setup-qemu-action@v2
+#       - uses: docker/setup-buildx-action@v2
+#         with:
+#           driver: docker-container
+#           driver-opts: network=host
 
-      - id: versioning
-        run: echo "tag=$(cat ./version)" >> $GITHUB_ENV
+#       - run: make patch
 
-      - name: Check if component is db
-        if: ${{ (matrix.component == 'db') }}
-        run: |
-          bash ./scripts/convert.sh ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
-          cat ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
+#       - uses: docker/login-action@v2
+#         with:
+#           registry: minregi.k3.acornsoft.io
+#           username: admin
+#           password: Pass0000@
 
-      - name: Build & Publish images
-        env:
-          IMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
-          BASEIMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
-          IMAGELABELS: org.opencontainers.image.source=https://minregi.k3.acornsoft.io/goharbor
-          MULTIARCH: true
-          TRIVYFLAG: true
-          CHARTFLAG: true
-          NOTARYFLAG: true
-          PUSHBASEIMAGE: true
-        run: |
-          cd ./harbor;
-          set -eux;
+#       - id: versioning
+#         run: echo "tag=$(cat ./version)" >> $GITHUB_ENV
 
-          CTX="BUILDBIN=true VERSIONTAG=${{ env.tag }} BASEIMAGETAG=${{ env.tag }}  MULTIARCH=${MULTIARCH} IMAGENAMESPACE=${IMAGENAMESPACE} BASEIMAGENAMESPACE=${BASEIMAGENAMESPACE} TRIVYFLAG=${TRIVYFLAG} CHARTFLAG=${CHARTFLAG} NOTARYFLAG=${CHARTFLAG} IMAGELABELS=${IMAGELABELS} PUSHBASEIMAGE=${PUSHBASEIMAGE}"
+#       - name: Check if component is db
+#         if: ${{ (matrix.component == 'db') }}
+#         run: |
+#           bash ./scripts/convert.sh ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
+#           cat ./harbor/make/photon/${{ matrix.component }}/Dockerfile.base
 
-          make versions_prepare ${CTX};
+#       - name: Build & Publish images
+#         env:
+#           IMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
+#           BASEIMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
+#           IMAGELABELS: org.opencontainers.image.source=https://minregi.k3.acornsoft.io/goharbor
+#           MULTIARCH: true
+#           TRIVYFLAG: true
+#           CHARTFLAG: true
+#           NOTARYFLAG: true
+#           PUSHBASEIMAGE: true
+#         run: |
+#           cd ./harbor;
+#           set -eux;
 
-          case ${{ matrix.component }} in
-            core)                   make compile_core ${CTX} ;;
-            jobservice)             make compile_jobservice ${CTX};;
-            registryctl)            make compile_registryctl ${CTX};;
-            standalone_db_migrator) make compile_standalone_db_migrator ${CTX} ;;
-          esac;
+#           CTX="BUILDBIN=true VERSIONTAG=${{ env.tag }} BASEIMAGETAG=${{ env.tag }}  MULTIARCH=${MULTIARCH} IMAGENAMESPACE=${IMAGENAMESPACE} BASEIMAGENAMESPACE=${BASEIMAGENAMESPACE} TRIVYFLAG=${TRIVYFLAG} CHARTFLAG=${CHARTFLAG} NOTARYFLAG=${CHARTFLAG} IMAGELABELS=${IMAGELABELS} PUSHBASEIMAGE=${PUSHBASEIMAGE}"
 
-          case ${{ matrix.component }} in
-            exporter)    make build BUILDTARGET="_compile_and_build_exporter" ${CTX} ;;
-            registryctl) make build BUILDTARGET="_build_registry _build_registryctl" ${CTX} ;;
-            *)           make build BUILDTARGET="_build_${{ matrix.component }}" ${CTX} ;;
-          esac;
+#           make versions_prepare ${CTX};
 
-  docker-package:
-    needs: docker-image
+#           case ${{ matrix.component }} in
+#             core)                   make compile_core ${CTX} ;;
+#             jobservice)             make compile_jobservice ${CTX};;
+#             registryctl)            make compile_registryctl ${CTX};;
+#             standalone_db_migrator) make compile_standalone_db_migrator ${CTX} ;;
+#           esac;
 
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
+#           case ${{ matrix.component }} in
+#             exporter)    make build BUILDTARGET="_compile_and_build_exporter" ${CTX} ;;
+#             registryctl) make build BUILDTARGET="_build_registry _build_registryctl" ${CTX} ;;
+#             *)           make build BUILDTARGET="_build_${{ matrix.component }}" ${CTX} ;;
+#           esac;
 
-    defaults:
-      run:
-        working-directory: ./
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
+#   docker-package:
+#     needs: docker-image
 
-      - uses: actions/setup-go@v3
-        with:
-          go-version: "^1.20.x"
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: write
+#     strategy:
+#       fail-fast: false
 
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
-        with:
-          driver: docker-container
-          driver-opts: network=host
+#     defaults:
+#       run:
+#         working-directory: ./
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           submodules: true
 
-      - run: make patch
+#       - uses: actions/setup-go@v3
+#         with:
+#           go-version: "^1.20.x"
 
-      - uses: docker/login-action@v2
-        with:
-          registry: minregi.k3.acornsoft.io
-          username: admin
-          password: Pass0000@
+#       - uses: docker/setup-qemu-action@v2
+#       - uses: docker/setup-buildx-action@v2
+#         with:
+#           driver: docker-container
+#           driver-opts: network=host
 
-      - id: versioning
-        run: echo "tag=$(cat ./version)" >> $GITHUB_ENV
+#       - run: make patch
 
-      - name: Load remote Docker image
-        run: |
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-trivy-adapter-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-core-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-db-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-exporter-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-jobservice-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-log-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-nginx-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-portal-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-prepare-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-redis-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-registry-base:${{ env.tag }} 
-          docker pull minregi.k3.acornsoft.io/goharbor/harbor-registryctl-base:${{ env.tag }}
+#       - uses: docker/login-action@v2
+#         with:
+#           registry: minregi.k3.acornsoft.io
+#           username: admin
+#           password: Pass0000@
 
-      - name: Changing the tag of the base image
-        run: |
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-trivy-adapter-base:${{ env.tag }} goharbor/trivy-adapter:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-core-base:${{ env.tag }} goharbor/core:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-db-base:${{ env.tag }} goharbor/db:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-exporter-base:${{ env.tag }} goharbor/exporter:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-jobservice-base:${{ env.tag }} goharbor/jobservice:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-log-base:${{ env.tag }} goharbor/log:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-nginx-base:${{ env.tag }} goharbor/nginx:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-portal-base:${{ env.tag }} goharbor/portal:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-prepare-base:${{ env.tag }} goharbor/prepare:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-redis-base:${{ env.tag }} goharbor/redis:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-registry-base:${{ env.tag }} goharbor/registry:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-registryctl-base:${{ env.tag }} goharbor/registryctl:${{ env.tag }}
+#       - id: versioning
+#         run: echo "tag=$(cat ./version)" >> $GITHUB_ENV
 
-      - name: Print list of images
-        run: |
-          docker images -a
+#       - name: Load remote Docker image
+#         run: |
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-trivy-adapter-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-core-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-db-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-exporter-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-jobservice-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-log-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-nginx-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-portal-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-prepare-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-redis-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-registry-base:${{ env.tag }}
+#           docker pull minregi.k3.acornsoft.io/goharbor/harbor-registryctl-base:${{ env.tag }}
 
-      - name: Docker packaging Offline installer
-        env:
-          VERSIONTAG: ${{ env.tag }}
-          SSH_PRIVATE_KEY: ${{ secrets.ISSAC_KEY }}
+#       - name: Changing the tag of the base image
+#         run: |
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-trivy-adapter-base:${{ env.tag }} goharbor/trivy-adapter:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-core-base:${{ env.tag }} goharbor/core:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-db-base:${{ env.tag }} goharbor/db:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-exporter-base:${{ env.tag }} goharbor/exporter:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-jobservice-base:${{ env.tag }} goharbor/jobservice:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-log-base:${{ env.tag }} goharbor/log:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-nginx-base:${{ env.tag }} goharbor/nginx:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-portal-base:${{ env.tag }} goharbor/portal:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-prepare-base:${{ env.tag }} goharbor/prepare:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-redis-base:${{ env.tag }} goharbor/redis:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-registry-base:${{ env.tag }} goharbor/registry:${{ env.tag }}
+#           docker tag minregi.k3.acornsoft.io/goharbor/harbor-registryctl-base:${{ env.tag }} goharbor/registryctl:${{ env.tag }}
 
-        run: |
-          # Run the 'package_offline' command in ./harbor/Makefile
-          cd ./harbor
-          sed -i 's/package_offline: update_prepare_version compile build/package_offline: update_prepare_version/' Makefile
-          cat Makefile
-          # make package_offline
+#       - name: Print list of images
+#         run: |
+#           docker images -a
 
-          # Setup SSH key
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.ISSAC_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+#       - name: Docker packaging Offline installer
+#         env:
+#           VERSIONTAG: ${{ env.tag }}
+#           SSH_PRIVATE_KEY: ${{ secrets.ISSAC_KEY }}
 
-          # Disable host key checking
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+#         run: |
+#           # Run the 'package_offline' command in ./harbor/Makefile
+#           cd ./harbor
+#           sed -i 's/package_offline: update_prepare_version compile build/package_offline: update_prepare_version/' Makefile
+#           cat Makefile
+#           make package_offline
 
-          # Send the output file to the certain server
-          # chown ubuntu:ubuntu ./harbor/harbor-offline-installer*
-          # scp -i ~/.ssh/id_rsa ./harbor/harbor-offline-installer* ubuntu@3.36.98.17:/home/ubuntu/
+#           # Setup SSH key
+#           mkdir -p ~/.ssh/
+#           echo "${{ secrets.ISSAC_KEY }}" > ~/.ssh/id_rsa
+#           chmod 600 ~/.ssh/id_rsa
+
+#           # Disable host key checking
+#           echo "StrictHostKeyChecking no" >> ~/.ssh/config
+
+#           # Send the output file to the certain server
+#           chown ubuntu:ubuntu ./harbor/harbor-offline-installer*
+#           scp -i ~/.ssh/id_rsa ./harbor/harbor-offline-installer* ubuntu@3.36.98.17:/home/ubuntu/
