@@ -226,18 +226,18 @@ jobs:
 
       - name: Changing the tag of the base image
         run: |
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-trivy-adapter-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/trivy-adapter:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-core-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/core:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-db-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/db:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-exporter-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/exporter:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-jobservice-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/jobservice:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-log-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/log:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-nginx-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/nginx:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-portal-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/portal:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-prepare-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/prepare:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-redis-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/redis:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-registry-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/registry:${{ env.tag }}
-          docker tag minregi.k3.acornsoft.io/goharbor/harbor-registryctl-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/registryctl:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-trivy-adapter-base:${{ env.tag }} goharbor/trivy-adapter:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-core-base:${{ env.tag }} goharbor/core:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-db-base:${{ env.tag }} goharbor/db:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-exporter-base:${{ env.tag }} goharbor/exporter:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-jobservice-base:${{ env.tag }} goharbor/jobservice:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-log-base:${{ env.tag }} goharbor/log:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-nginx-base:${{ env.tag }} goharbor/nginx:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-portal-base:${{ env.tag }} goharbor/portal:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-prepare-base:${{ env.tag }} goharbor/prepare:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-redis-base:${{ env.tag }} goharbor/redis:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-registry-base:${{ env.tag }} goharbor/registry:${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/goharbor/harbor-registryctl-base:${{ env.tag }} goharbor/registryctl:${{ env.tag }}
 
       - name: Print list of images
         run: |
@@ -245,8 +245,6 @@ jobs:
 
       - name: Docker packaging Offline installer
         env:
-          IMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
-          BASEIMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
           VERSIONTAG: ${{ env.tag }}
           SSH_PRIVATE_KEY: ${{ secrets.ISSAC_KEY }}
 
