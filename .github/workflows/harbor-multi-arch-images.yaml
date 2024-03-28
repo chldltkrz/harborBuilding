@@ -237,13 +237,7 @@ jobs:
           docker tag minregi.k3.acornsoft.io/goharbor/harbor-registry-base:${{ env.tag }} goharbor/registry-photon:${{ env.tag }}
           docker tag minregi.k3.acornsoft.io/goharbor/harbor-registryctl-base:${{ env.tag }} goharbor/harbor-registryctl:${{ env.tag }}
 
-      - name: Print list of images
-        run: |
-          docker images -a
-
       - name: Docker packaging Offline installer
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.ISSAC_KEY }}
 
         run: |
           # Run the 'package_offline' command in ./harbor/Makefile
@@ -252,15 +246,20 @@ jobs:
           sed -i 's/TRIVYFLAG=false/TRIVYFLAG=true/' Makefile
           sed -i '0,/VERSIONTAG=dev/s//VERSIONTAG=v2.7.4/' Makefile
 
+      - name: package_offline
+        run: |
           make package_offline
 
-          # Setup SSH key
+      - name: Setup SSH key
+        run: |
           mkdir -p ~/.ssh/
           echo "${{ secrets.ISSAC_KEY }}" > ~/.ssh/id_rsa
+          cat ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
           # Disable host key checking
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
 
-          # Send the output file to the certain server
-          scp -i ~/.ssh/id_rsa ./harbor/harbor-offline-installer* ubuntu@3.36.98.17:/home/ubuntu/
+      - name: Send the output file to the certain server
+        run: |
+          scp -i ~/.ssh/id_rsa ./harbor-offline-installer-* ubuntu@3.36.98.17:/home/ubuntu/
