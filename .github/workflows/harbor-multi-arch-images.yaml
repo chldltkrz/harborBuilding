@@ -220,9 +220,12 @@ jobs:
           docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-portal:${{ env.tag }}
           docker pull --platform=linux/arm64 minregi.k3.acornsoft.io/test/harbor-core:${{ env.tag }}
 
+      - name: running docker images
+        run: docker images -a
+
       - name: Changing the tag of the base image
         run: |
-          docker tag minregi.k3.acornsoft.io/test/nginx-photon:${{ env.tag }} goharbor/nginx-photon${{ env.tag }}
+          docker tag minregi.k3.acornsoft.io/test/nginx-photon:${{ env.tag }} goharbor/nginx-photon:${{ env.tag }}
           docker tag minregi.k3.acornsoft.io/test/redis-photon:${{ env.tag }} goharbor/redis-photon:${{ env.tag }}
           docker tag minregi.k3.acornsoft.io/test/harbor-log:${{ env.tag }} goharbor/harbor-log:${{ env.tag }}
           docker tag minregi.k3.acornsoft.io/test/harbor-exporter:${{ env.tag }} goharbor/harbor-exporter:${{ env.tag }}
@@ -234,6 +237,9 @@ jobs:
           docker tag minregi.k3.acornsoft.io/test/harbor-registryctl:${{ env.tag }} goharbor/harbor-registryctl:${{ env.tag }}
           docker tag minregi.k3.acornsoft.io/test/harbor-portal:${{ env.tag }} goharbor/harbor-portal:${{ env.tag }}
           docker tag minregi.k3.acornsoft.io/test/harbor-core:${{ env.tag }} goharbor/harbor-core:${{ env.tag }}
+
+      - name: running docker images2
+        run: docker images -a
 
       - name: Docker packaging Offline installer
         run: |
