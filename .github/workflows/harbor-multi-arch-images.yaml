@@ -239,6 +239,10 @@ jobs:
           docker tag minregi.k3.acornsoft.io/goharbor/harbor-registry-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/registry:${{ env.tag }}
           docker tag minregi.k3.acornsoft.io/goharbor/harbor-registryctl-base:${{ env.tag }} minregi.k3.acornsoft.io/goharbor/registryctl:${{ env.tag }}
 
+      - name: Print list of images
+        run: |
+          docker images -a
+
       - name: Docker packaging Offline installer
         env:
           IMAGENAMESPACE: minregi.k3.acornsoft.io/goharbor
